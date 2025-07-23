@@ -33,38 +33,63 @@ Make sure you have the following installed:
 
 ###File Architecture
 
-personal_finance_app/
+personal_finance_app
+
 ├── app/
+
 │   ├── init.py
+
 │   ├── models.py
+
 │   ├── forms/
 │   │   └── forms.py
+
 │   ├── routers/
 │   │   ├── init.py
+
 │   │   ├── auth.py
+
 │   │   ├── budget.py
+
 │   │   ├── dashboard.py
+
 │   │   ├── goals.py
+
 │   │   ├── investment.py
+
 │   │   ├── main.py
+
 │   │   ├── reminders.py
+
 │   │   └── transactions.py
+
 │   ├── services/
+
 │   │   
 │   ├── static/
+
 │   │   
 │   ├── templates/
 │   │   └── … (existing)
+
 │   ├── utils/
 │      └── init.py
+
 │  
 ├── config/
+
 │   ├── init.py
+
 │   ├── base.py
+
 │   ├── development.py
+
 │   ├── production.py
+
 │   └── testing.py
+
 ├── migrations/
+
 |
 ├── requirements.txt
 ├── run.py
