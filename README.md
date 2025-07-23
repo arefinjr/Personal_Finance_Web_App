@@ -52,7 +52,7 @@ npm start
 # or
 python app.py
 
-File Architecture
+###File Architecture
 
 personal_finance_app/
 ├── app/
@@ -91,9 +91,8 @@ personal_finance_app/
 ├── run.py
 
 
-## Lisense
+### Lisense
 
----
 
 MIT Lisense
 
