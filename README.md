@@ -30,6 +30,7 @@ Make sure you have the following installed:
   _or_
 - Python and pip  
   (depending on your backend)
+
 ###File Architecture
 
 personal_finance_app/
