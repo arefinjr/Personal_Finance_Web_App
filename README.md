@@ -30,28 +30,6 @@ Make sure you have the following installed:
   _or_
 - Python and pip  
   (depending on your backend)
-
-### Installation
-
-```bash
-# Clone the repository
-git clone https://github.com/your-username/finance-web-app.git
-
-# Navigate into the directory
-cd finance-web-app
-
-# Install dependencies
-npm install
-# or
-pip install -r requirements.txt
-
-# Running app
-
-# Start the development server
-npm start
-# or
-python app.py
-
 ###File Architecture
 
 personal_finance_app/
@@ -95,6 +73,27 @@ personal_finance_app/
 
 
 MIT Lisense
+
+### Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/your-username/finance-web-app.git
+
+# Navigate into the directory
+cd finance-web-app
+
+# Install dependencies
+npm install
+# or
+pip install -r requirements.txt
+
+# Running app
+
+# Start the development server
+npm start
+# or
+python app.py
 
 
 
