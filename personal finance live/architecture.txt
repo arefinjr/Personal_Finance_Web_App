@@ -1,0 +1,35 @@
+personal_finance_app/
+├── 📁 .venv
+├── 📁 app
+│   ├── 📄 __init__.py
+│   ├── 📄 models.py
+│   ├── 📁 forms
+│   │   └── 📄 forms.py
+│   ├── 📁 routers
+│   │   ├── 📄 __init__.py
+│   │   ├── 📄 auth.py
+│   │   ├── 📄 budget.py
+│   │   ├── 📄 dashboard.py
+│   │   ├── 📄 goals.py
+│   │   ├── 📄 investment.py
+│   │   ├── 📄 main.py
+│   │   ├── 📄 reminders.py
+│   │   └── 📄 transactions.py
+│   ├── 📁 services
+│   ├── 📁 static
+│   ├── 📁 templates
+│   │   ├── 📄 base.html
+│   │   ├── 📄 budget.html
+│   │   ├── 📄 dashboard.html
+│   │   ├── 📄 goals.html
+│   │   ├── 📄 investment.html
+│   │   ├── 📄 login.html
+│   │   ├── 📄 register.html
+│   │   ├── 📄 reminders.html
+│   │   └── 📄 transactions.html
+│   ├── 📁 utils
+│   │   └── 📄 __init__.py
+├── 📄 architecture.txt
+├── 📄 config.py
+├── 📄 requirements.txt
+└── 📄 run.py

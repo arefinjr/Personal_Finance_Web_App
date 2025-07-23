@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% block title %}Budget{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h1 class="mb-4">Budget Planner</h1>
+
+  <!-- Add / Edit Form -->
+  <form method="POST" action="{{ url_for('budget.add_budget') }}" class="row g-2 mb-5">
+    {{ form.hidden_tag() }}
+    <div class="col-md-6">
+      <div class="form-floating mb-3">
+        {{ form.name(class="form-control", placeholder="Name") }}
+        {{ form.name.label(class="form-label") }}
+        {% if form.name.errors %}
+          {% for error in form.name.errors %}
+            <div class="text-danger small">{{ error }}</div>
+          {% endfor %}
+        {% endif %}
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="form-floating mb-3">
+        {{ form.amount(class="form-control", placeholder="Amount") }}
+        {{ form.amount.label(class="form-label") }}
+        {% if form.amount.errors %}
+          {% for error in form.amount.errors %}
+            <div class="text-danger small">{{ error }}</div>
+          {% endfor %}
+        {% endif %}
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="form-floating mb-3">
+        {{ form.end_date(class="form-control", placeholder="End Date") }}
+        {{ form.end_date.label(class="form-label") }}
+        {% if form.end_date.errors %}
+          {% for error in form.end_date.errors %}
+            <div class="text-danger small">{{ error }}</div>
+          {% endfor %}
+        {% endif %}
+      </div>
+    </div>
+    <div class="col-12">
+      <div class="d-grid gap-2">
+        {{ form.submit(class="btn btn-primary w-100") }}
+      </div>
+    </div>
+  </form>
+
+  <!-- Existing Budgets -->
+  <div class="card shadow-sm">
+    <div class="card-header bg-light d-flex justify-content-between align-items-center">
+      <h5 class="mb-0">Your Budgets</h5>
+      <div class="input-group">
+        <input type="text" class="form-control" placeholder="Search budgets" aria-label="Search budgets" aria-describedby="search-addon" id="search-budgets">
+        <button class="btn btn-outline-secondary" type="button" id="search-button"><i class="bi bi-search"></i></button>
+      </div>
+    </div>
+    {% if budgets %}
+    <div class="table-responsive mb-5">
+      <table class="table table-hover align-middle">
+        <thead class="table-light">
+          <tr>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Period</th>
+            <th>Category</th>
+            <th>Amount</th>
+            <th class="text-end">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="budget-table">
+          {% for b in budgets %}
+          <tr class="{{ 'table-success' if b.amount >= 0 else 'table-danger' }}">
+            <td>{{ b.start_date }}</td>
+            <td>{{ b.end_date or "-" }}</td>
+            <td>{{ b.period }}</td>
+            <td>{{ b.name }}</td>
+            <td class="text-end fw-bold">
+              {{ "+%.2f"|format(b.amount) if b.amount >= 0 else "%.2f"|format(b.amount) }}
+            </td>
+            <td class="text-end">
+              <a href="{{ url_for('budget.edit_budget', budget_id=b.id) }}"
+                 class="btn btn-sm btn-outline-primary me-2">Edit</a>
+              <form action="{{ url_for('budget.delete_budget', budget_id=b.id) }}" method="POST"
+                    class="d-inline" onsubmit="return confirm('Delete this budget?')">
+                {{ form.hidden_tag() if form else "" }}
+                <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+      <div class="card-body text-center">
+        <p class="text-muted">No budgets yet. Add one above!</p>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+<script>
+  document.getElementById('search-button').addEventListener('click', function() {
+    const searchTerm = document.getElementById('search-budgets').value.toLowerCase();
+    const rows = document.querySelectorAll('#budget-table tr');
+    rows.forEach(row => {
+      const name = row.cells[3].textContent.toLowerCase();
+      if (name.includes(searchTerm)) {
+        row.style.display = '';
+      } else {
+        row.style.display = 'none';
+      }
+    });
+  });
+</script>
+{% endblock %}

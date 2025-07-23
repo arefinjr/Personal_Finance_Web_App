@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block title %}Add Income{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2 class="mb-3">Add Income</h2>
+
+  <form method="post" class="row g-3 mt-2">
+    {{ form.hidden_tag() }}
+
+    <!-- Source Name -->
+    <div class="col-md-6">
+      {{ form.Income_Source_Name.label(class="form-label") }}
+      {{ form.Income_Source_Name(class="form-control", placeholder="e.g. Business") }}
+      {% for err in form.Income_Source_Name.errors %}
+        <div class="text-danger small">{{ err }}</div>
+      {% endfor %}
+    </div>
+
+    <!-- Amount Per Month -->
+    <div class="col-md-6">
+      {{ form.amount_per_month.label(class="form-label") }}
+      {{ form.amount_per_month(class="form-control", placeholder="0.00") }}
+      {% for err in form.amount_per_month.errors %}
+        <div class="text-danger small">{{ err }}</div>
+      {% endfor %}
+    </div>
+
+    <!-- Description / Partnership Note -->
+    <div class="col-12">
+      {{ form.Partnership.label(class="form-label") }}
+      {{ form.Partnership(class="form-control", placeholder="Optional note") }}
+    </div>
+
+    <!-- Type -->
+    <div class="col-md-6">
+      {{ form.type.label(class="form-label") }}
+      {{ form.type(class="form-select") }}
+      {% for err in form.type.errors %}
+        <div class="text-danger small">{{ err }}</div>
+      {% endfor %}
+    </div>
+
+    <!-- Date -->
+    <div class="col-md-6">
+      {{ form.date.label(class="form-label") }}
+      {{ form.date(class="form-control") }}
+      {% for err in form.date.errors %}
+        <div class="text-danger small">{{ err }}</div>
+      {% endfor %}
+    </div>
+
+    <!-- Submit -->
+    <div class="col-12">
+      {{ form.submit(class="btn btn-primary") }}
+      <a href="{{ url_for('main.index') }}" class="btn btn-outline-secondary ms-2">Cancel</a>
+    </div>
+  </form>
+</div>
+
+<!-- Income list -->
+<div class="container mt-4">
+  {% if addincome %}
+  <div class="row row-cols-1 row-cols-md-2 g-4">
+    {% for g in addincome %}
+    <div class="col">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">{{ g.income_source_name }}</h5>
+          {% if g.description %}
+            <p class="card-text text-muted small">{{ g.partnership }}</p>
+          {% endif %}
+
+          <div class="btn-group btn-group-sm mt-2">
+              <a href="{{ url_for('addincome.edit_income', income_id=g.id) }}"
+                class="btn btn-outline-primary">Edit</a>
+              <a href="{{ url_for('addincome.view_income', income_id=g.id) }}"
+                class="btn btn-outline-info">View</a>
+          </div>
+            <form action="{{ url_for('addincome.delete_income', income_id=g.id) }}"
+                  method="POST"
+                  class="d-inline"
+                  onsubmit="return confirm('Delete this income source?');">
+              <button type="submit" class="btn btn-outline-danger">Delete</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="alert alert-light text-center mt-5">No income sources yet ‑ add one above!</div>
+  {% endif %}
+</div>
+{% endblock %}

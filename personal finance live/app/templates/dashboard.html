@@ -1,0 +1,330 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+
+<h1 class="mb-4">📊 Dashboard</h1>
+
+<div class="container py-4">
+
+  <!-- Row 1: Net-worth & Projections -->
+  <div class="row g-3 mb-4">
+    <div class="col-md-4">
+      <div class="card shadow-sm p-3">
+        <div class="section-title mb-2">My Net Worth</div>
+        <div class="h4 fw-bold">₹ {{ "%.2f"|format(networths or 0) }}</div>
+        <div class="text-success small">↑ 20.32 %</div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <a href="/addincome" class="text-decoration-none">
+        <div class="card shadow-sm p-3 hover-effect">
+          <div class="section-title mb-2">Income</div>
+          <div class="h4 fw-bold">{{ "%.2f"|format(income or 0) }}</div>
+          <div class="text-success small">↑ 20.32 %</div>
+        </div>
+      </a>
+    </div>
+    <div class="col-md-4">
+      <a href="https://example.com/score-details" class="text-decoration-none">
+        <div class="card shadow-sm p-3 hover-effect">
+          <div class="section-title mb-2">Financial Health Score</div>
+          <div class="h4 fw-bold">{{ health_score or "😐" }}</div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <!-- Row 3 : two equal columns in the same row -->
+  <div class="row g-3 mb-4">
+    <!-- Row 3 Col 1 : Chart & summary -->
+    <div class="col-md-7">
+      <div class="card shadow-sm p-3 h-100">
+        <div class="section-title mb-3">My Finance Chart</div>
+        <div class="row g-2 small">
+          <div class="col-6">Income Stream <b>₹ {{ income|float }}</b></div>
+          <div class="col-6">Expenses <b>₹ {{ expenses|float }}</b></div>
+          <div class="col-6">Security Money <b>₹ {{ security|float }}</b></div>
+          <div class="col-6">Medical Expenses (Reserved) <b>₹ {{ medical|float }}</b></div>
+        </div>
+        <div class="col-12 mt-2">
+          <canvas id="financeChart" height="120"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row 3 Col 2 : stacked cards -->
+    <div class="col-md-5">
+      <div class="row g-2">
+        <h5>Top Priority</h5>
+        {% for item in [
+          {"name": "Family Fund", "value": family_fund, "url": "https://example.com/savings-details"},
+          {"name": "Emergency Fund", "value": emergency_fund, "url": "/transactions"},
+          {"name": "Loan", "value": loan, "url": "/transactions"}
+        ] %}
+        <div class="col-12">
+          <a href="{{ item.url }}" class="text-decoration-none">
+            <div class="card shadow-sm p-3 hover-effect">
+              <div class="section-title mb-2">{{ item.name }}</div>
+              <div class="h4 fw-bold">{{ "%.2f"|format(item.value or 0) }}</div>
+              <div class="text-success small">↑ 20.32 %</div>
+            </div>
+          </a>
+        </div>
+        {% endfor %}
+        <h5>Second Priority</h5>
+        {% for item in [
+          {"name": "Maintenance Fund", "value": maintenance_fund, "url": "/transactions"},
+          {"name": "Savings Fund", "value": savings, "url": "https://example.com/savings-details"},
+          {"name": "Free Fund", "value": savings, "url": "https://example.com/savings-details"}
+        ] %}
+        <div class="col-12">
+          <a href="{{ item.url }}" class="text-decoration-none">
+            <div class="card shadow-sm p-3 hover-effect">
+              <div class="section-title mb-2">{{ item.name }}</div>
+              <div class="h4 fw-bold">{{ "%.2f"|format(item.value or 0) }}</div>
+              <div class="text-success small">↑ 20.32 %</div>
+            </div>
+          </a>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Row 4: Trending Stocks -->
+  <div class="card shadow-sm p-3">
+    <div class="section-title mb-2">Trending Hot Stocks</div>
+    <div class="d-flex gap-3 overflow-auto">
+      {% for i in range(5) %}
+      <div class="card bg-light p-2 text-center" style="min-width:120px;">
+        <div class="fw-bold">STOCK{{ i+1 }}</div>
+        <small class="text-muted">₹ 500</small>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="row g-3 mb-4">
+    <div class="col-md-4">
+      <div class="card shadow-sm p-3">
+        <div class="section-title mb-2">Net Income</div>
+        <div class="h4 fw-bold">₹ {{ "%.2f"|format(income - expenses or 0) }}</div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card shadow-sm p-3">
+        <div class="section-title mb-2">Savings Rate</div>
+        <div class="h4 fw-bold">{{ "%.2f"|format((savings / income * 100) if income else 0) }}%</div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card shadow-sm p-3">
+        <div class="section-title mb-2">Debt-to-Income Ratio</div>
+        <div class="h4 fw-bold">{{ "%.2f"|format((loan / income * 100) if income else 0) }}%</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-12">
+    <div class="card shadow-sm p-3">
+      <div class="section-title mb-2">Income vs. Expenses Over Time</div>
+      <canvas id="incomeVsExpensesChart" height="120"></canvas>
+    </div>
+  </div>
+
+  <!-- Row 5: Quick Actions -->
+  <div class="row mt-5">
+    <div class="col-md-6">
+      <a href="{{ url_for('transactions.transactions') }}" class="btn btn-primary w-100">Add Transaction</a>
+    </div>
+    <div class="col-md-6">
+      <a href="{{ url_for('budget.budget') }}" class="btn btn-outline-success w-100">Manage Budget</a>
+    </div>
+    <div class="col-md-6">
+      <a href="{{ url_for('addincome.income') }}" class="btn btn-primary w-100">Add Income</a>
+    </div>
+  </div>
+
+</div>
+
+<div class="col-md-12">
+  <div class="card shadow-sm p-3">
+    <div class="section-title mb-2">Filter Data</div>
+    <form id="filterForm">
+      <div class="form-group">
+        <label for="dateRange">Date Range</label>
+        <input type="text" class="form-control" id="dateRange" name="dateRange" placeholder="Select Date Range">
+      </div>
+      <button type="submit" class="btnbtn-primary">Apply</button>
+    </form>
+  </div>
+</div>
+
+<!-- ========== ENVELOPES ========== -->
+<section class="row g-3 mt-4">
+  <h5>💰 Envelope Budgets ({{ current_month }})</h5>
+  {% for env in envelopes %}
+  <div class="col-md-3">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h6 class="card-title">{{ env.category }}</h6>
+        <div class="progress mb-2" style="height:10px;">
+          {% set pct = (env.spent / env.budgeted * 100) | round | int %}
+          <div class="progress-bar {% if pct>100 %}bg-danger{% else %}bg-success{% endif %}"
+               style="width:{{ pct if pct<=100 else 100 }}%"></div>
+        </div>
+        <small>₹{{ env.spent }} / ₹{{ env.budgeted }}</small>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</section>
+
+<!-- ========== GOALS ========== -->
+<section class="row g-3 mt-4">
+  <h5>🎯 Goals</h5>
+  {% for g in goals %}
+  <div class="col-md-4">
+    <div class="card shadow-sm">
+      <div class="card-body text-center">
+        <h6>{{ g.name }}</h6>
+        <canvas class="goal-ring" data-value="{{ g.current_amount }}" data-target="{{ g.target_amount }}" height="80"></canvas>
+        <small>₹{{ g.current_amount }} / ₹{{ g.target_amount }}</small>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</section>
+
+<!-- ========== NET-WORTH SPARKLINE ========== -->
+<section class="row g-3 mt-4">
+  <div class="col-12">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h5>Net-Worth Trend (12 Months)</h5>
+        <canvas id="netWorthSparkline" height="60"></canvas>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== UPCOMING SCHEDULED TXNS ========== -->
+<section class="row g-3 mt-4">
+  <h5>📅 Upcoming (Next 30 days)</h5>
+  <ul class="list-group">
+    {% for s in upcoming %}
+    <li class="list-group-item d-flex justify-content-between">
+      <span>{{ s.name }}</span>
+      <span>₹{{ s.amount }} on {{ s.next_date.strftime('%d %b') }}</span>
+    </li>
+    {% endfor %}
+  </ul>
+</section>
+
+<!-- ========== JS for sparkline & goal rings ========== -->
+<script>
+/* Net-worth sparkline */
+new Chart(document.getElementById('netWorthSparkline'), {
+  type: 'line',
+  data: {
+    labels: {{ sparkline_labels | tojson }},
+    datasets: [{
+      label: '',
+      data: {{ sparkline_data | tojson }},
+      borderColor: '#0d6efd',
+      pointRadius: 0,
+      fill: false,
+      tension: 0.3
+    }]
+  },
+  options: { plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { display: false } } }
+});
+
+/* Goal rings via Chart.js doughnut */
+document.querySelectorAll('.goal-ring').forEach(canvas => {
+  const v = parseFloat(canvas.dataset.value);
+  const t = parseFloat(canvas.dataset.target);
+  new Chart(canvas, {
+    type: 'doughnut',
+    data: {
+      datasets: [{
+        data: [v, t - v],
+        backgroundColor: ['#0d6efd', '#e9ecef']
+      }]
+    },
+    options: { cutout: '70%', plugins: { legend: { display: false } } }
+  });
+});
+</script>
+
+<!-- JavaScript -->
+<!-- Chart.js Library -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- Finance Chart -->
+<script>
+  new Chart(document.getElementById('financeChart'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Income', 'Expenses', 'Security', 'Medical', 'Free'],
+      datasets: [{
+        data: [{{ income or 0 }}, {{ expenses or 0 }}, {{ security or 0 }}, {{ medical or 0 }}, {{ free or 0 }}],
+        backgroundColor: ['#28a745', '#dc3545', '#ffc107', '#0dcaf0', '#6f42c1']
+      }]
+    },
+    options: {
+      plugins: {
+        legend: { display: false }
+      }
+    }
+  });
+</script>
+
+<!-- Investment Simulation -->
+<script>
+  function simulate() {
+    const amt = document.getElementById('whatIfAmount').value;
+    const future = (amt * 20).toLocaleString('en-IN');
+    document.getElementById('whatIfResult').innerText = `₹ ${future}`;
+  }
+</script>
+
+<script>
+  new Chart(document.getElementById('incomeVsExpensesChart'), {
+    type: 'line',
+    data: {
+      labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+      datasets: [
+        {
+          label: 'Income',
+          data: {{ income_monthly | tojson }},
+          borderColor: '#28a745',
+          fill: false
+        },
+        {
+          label: 'Expenses',
+          data: {{ expenses_monthly | tojson }},
+          borderColor: '#dc3545',
+          fill: false
+        }
+      ]
+    },
+    options: {
+      plugins: {
+        legend: { display: true }
+      }
+    }
+  });
+</script>
+
+
+<script>
+  document.getElementById('filterForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+    const dateRange = document.getElementById('dateRange').value;
+    // Add logic to filter data based on date range
+    console.log('Filtering data for:', dateRange);
+  });
+</script>
+
+{% endblock %}

@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block title %}Transactions{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+
+  <!-- Flash messages -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for cat, msg in messages %}
+        <div class="alert alert-{{cat}} alert-dismissible fade show" role="alert">
+          {{ msg }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  <h2 class="mb-4">My Transactions</h2>
+
+  <!-- List / Table -->
+  {% if transactions %}
+  <div class="table-responsive mb-5">
+    <table class="table table-hover align-middle">
+      <thead class="table-light">
+        <tr>
+          <th>Date</th>
+          <th>Description</th>
+          <th>Category</th>
+          <th>Amount</th>
+          <th class="text-end">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for tx in transactions %}
+        <tr class="{{ 'table-success' if tx.type == 'income' else 'table-danger' }}">
+          <td>{{ tx.date.strftime('%Y-%m-%d') }}</td>
+          <td>{{ tx.description or '-' }}</td>
+          <td>{{ tx.category }}</td>
+          <td class="text-end fw-bold">
+            {% if tx.type == 'income' %}
+              +{{ "%.2f"|format(tx.amount) }}
+            {% else %}
+              {{ "%.2f"|format(tx.amount) }}
+            {% endif %}
+          </td>
+          <td><form action="{{ url_for('transactions.delete_transaction', transaction_id=tx.id) }}" method="POST"
+                    class="d-inline" onsubmit="return confirm('Delete this budget?')">
+                {{ form.hidden_tag() if form else "" }}
+                <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+              </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="alert alert-info mb-5">No transactions yet.</div>
+  {% endif %}
+
+  <!-- Add-new form -->
+  <h3 class="mb-3">Add Transaction</h3>
+  <form method="post" class="row g-3 mb-4">
+    {{ form.hidden_tag() }}
+
+    <div class="col-md-6">
+      {{ form.amount.label(class="form-label") }}
+      {{ form.amount(class="form-control", placeholder="0.00") }}
+      {% for err in form.amount.errors %}
+        <div class="text-danger small">{{ err }}</div>
+      {% endfor %}
+    </div>
+
+    <div class="col-md-6">
+      {{ form.category.label(class="form-label") }}
+      {{ form.category(class="form-control", placeholder="e.g. Groceries") }}
+      {% for err in form.category.errors %}
+        <div class="text-danger small">{{ err }}</div>
+      {% endfor %}
+    </div>
+
+    <div class="col-12">
+      {{ form.description.label(class="form-label") }}
+      {{ form.description(class="form-control", placeholder="Optional note") }}
+    </div>
+
+    <div class="col-md-6">
+      {{ form.tx_type.label(class="form-label") }}
+      {{ form.tx_type(class="form-select") }}
+      {% for err in form.tx_type.errors %}
+        <div class="text-danger small">{{ err }}</div>
+      {% endfor %}
+    </div>
+
+    <div class="col-md-6">
+      {{ form.date.label(class="form-label") }}
+      {{ form.date(class="form-control") }}
+      {% for err in form.date.errors %}
+        <div class="text-danger small">{{ err }}</div>
+      {% endfor %}
+    </div>
+
+    <div class="col-12">
+      {{ form.submit(class="btn btn-primary") }}
+      <a href="{{ url_for('main.index') }}" class="btn btn-outline-secondary ms-2">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

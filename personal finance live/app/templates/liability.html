@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container-fluid">
+  <!-- ── ADD FORM (collapsible) ── -->
+  <div class="mb-4">
+    <button class="btn btn-outline-primary" type="button" data-bs-toggle="collapse"
+            data-bs-target="#addLiabilityCollapse" aria-expanded="false"
+            aria-controls="addLiabilityCollapse">
+      + Add Liability
+    </button>
+
+    <div class="collapse mt-3" id="addLiabilityCollapse">
+      <div class="card shadow-sm">
+        <div class="card-header"><strong>Add Liability</strong></div>
+        <div class="card-body">
+          <form method="POST" action="{{ url_for('liability.add_liability') }}" novalidate>
+            {{ form.hidden_tag() }}
+            <div class="row g-3">
+              <div class="col-md-6">{{ form.name.label }}{{ form.name(class="form-control") }}</div>
+              <div class="col-md-6">{{ form.type.label }}{{ form.type(class="form-select") }}</div>
+
+              <div class="col-md-4">{{ form.principal_amount.label }}{{ form.principal_amount(class="form-control") }}</div>
+              <div class="col-md-4">{{ form.interest_rate.label }}{{ form.interest_rate(class="form-control") }}</div>
+              <div class="col-md-4">{{ form.period_months.label }}{{ form.period_months(class="form-control") }}</div>
+
+              <div class="col-md-6">{{ form.emi_amount.label }}{{ form.emi_amount(class="form-control") }}</div>
+              <div class="col-md-6">{{ form.due_date.label }}{{ form.due_date(class="form-control", type="date") }}</div>
+              <div class="col-md-6">{{ form.start_date.label }}{{ form.start_date(class="form-control", type="date") }}</div>
+
+              <div class="col-md-3">
+                {{ form.is_floating(class="form-check-input") }}{{ form.is_floating.label(class="form-check-label") }}
+              </div>
+              <div class="col-md-3">
+                {{ form.has_penalty(class="form-check-input") }}{{ form.has_penalty.label(class="form-check-label") }}
+              </div>
+              <div class="col-md-6">{{ form.penalty_rate.label }}{{ form.penalty_rate(class="form-control") }}</div>
+
+              <div class="col-12">{{ form.notes.label }}{{ form.notes(class="form-control", rows=2) }}</div>
+            </div>
+            <button type="submit" class="btn btn-primary mt-3">Save Liability</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── LIST TABLE ── -->
+  {% if liabilities %}
+  <div class="table-responsive mb-5">
+    <table class="table table-hover align-middle">
+      <thead class="table-light">
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Balance (₹)</th>
+          <th>Rate (%)</th>
+          <th>EMI (₹)</th>
+          <th>Next Due</th>
+          <th class="text-end">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for l in liabilities %}
+        <tr class="{{ 'table-success' if l.type == 'income' else 'table-danger' }}">
+          <td>{{ l.name }}</td>
+          <td>{{ l.type_.title() }}</td>
+          <td>{{ "%.2f"|format(l.balance) }}</td>
+          <td>{{ "%.2f"|format(l.interest_rate) }}</td>
+          <td>{{ "%.2f"|format(l.monthly_payment) }}</td>
+          <td>{{ l.due_date.strftime('%Y-%m-%d') }}</td>
+          <td class="text-end">
+            <form action="{{ url_for('liability.delete_liability', liability_id=l.id) }}" method="POST"
+                  class="d-inline" onsubmit="return confirm('Delete this liability?')">
+              <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="alert alert-info mb-5">No liabilities yet.</div>
+  {% endif %}
+</div>
+{% endblock %}

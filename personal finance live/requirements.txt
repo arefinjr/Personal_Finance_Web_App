@@ -1,0 +1,28 @@
+# ---------- Core ----------
+Flask==2.3.3                  # Web micro-framework
+Werkzeug==2.3.7               # WSGI layer (pin to 2.x; 3.x breaks Flask-Login <0.6.3 & Flask-WTF <1.2)
+
+# ---------- Database ----------
+Flask-SQLAlchemy==3.0.5       # SQLAlchemy integration
+Flask-Migrate==4.0.5          # Alembic migrations CLI
+SQLAlchemy==2.0.23            # ORM engine (explicit pin avoids 2.1 surprises)
+
+# ---------- Forms & Security ----------
+Flask-WTF==1.2.1              # CSRF + WTForms helpers (>=1.2 supports Werkzeug 3; we pin 1.x to stay on 2.x)
+WTForms==3.1.0                # Form definitions
+email-validator==2.1.0        # E-mail address validation used by WTForms
+Flask-Login==0.6.3            # User session management (>=0.6.3 fixes Werkzeug 3 compat; pin to 0.6.x for Flask 2.x)
+
+# ---------- Password Hashing ----------
+bcrypt==4.1.2                 # Strong password hashing via `bcrypt.checkpw`
+
+# ---------- Environment & Server ----------
+python-dotenv==1.0.0          # Load .env files in development
+gunicorn==21.2.0              # Production WSGI server (Heroku, Docker, VPS)
+
+# ---------- Optional extras ----------
+# Uncomment if you need them later:
+# Flask-Mail==0.9.1           # SMTP e-mail support
+# Flask-APScheduler==1.13.0   # Background jobs (reminders)
+# pytest==7.4.3               # Testing framework
+# pytest-flask==1.2.0         # Flask test helpers

@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}Goals{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h1 class="mb-4">Financial Goals</h1>
+
+  <!-- Add / Edit form -->
+  <form method="POST" class="row g-3 mb-5">
+    {{ form.hidden_tag() }}
+
+    <div class="col-md-4">
+      {{ form.title(class="form-control", placeholder="Goal title") }}
+    </div>
+
+    <div class="col-md-4">
+      {{ form.description(class="form-control", placeholder="Short description (optional)") }}
+    </div>
+
+    <div class="col-md-2">
+      {{ form.target(class="form-control", placeholder="Target $") }}
+    </div>
+
+    <div class="col-md-2">
+      {{ form.submit(class="btn btn-info w-100") }}
+    </div>
+  </form>
+
+  <!-- Goals list -->
+  {% if goals %}
+  <div class="row row-cols-1 row-cols-md-2 g-4">
+    {% for g in goals %}
+    <div class="col">
+      <div class="card h-100">
+        <div class="card-body">
+          <h5 class="card-title">{{ g.title }}</h5>
+          {% if g.description %}
+            <p class="card-text text-muted small">{{ g.description }}</p>
+          {% endif %}
+
+          {% set percent = g.progress_percent() %}
+          <div class="progress mb-2" style="height: 8px;">
+            <div class="progress-bar bg-success"
+                      role="progressbar"
+                      
+                      aria-valuenow="{{ percent }}"
+                      aria-valuemin="0"
+                      aria-valuemax="100">
+            </div>
+          </div>
+
+          <p class="mb-1">
+            Saved: <strong>${{ "%.2f"|format(g.saved) }}</strong> /
+            Target: <strong>${{ "%.2f"|format(g.target) }}</strong>
+            <small class="text-muted float-end">{{ "%.1f"|format(percent) }}%</small>
+          </p>
+
+          <div class="btn-group btn-group-sm mt-2">
+            <a href="{{ url_for('goals.edit_goal', goal_id=g.id) }}"
+               class="btn btn-outline-primary">Edit</a>
+            <form action="{{ url_for('goals.delete_goal', goal_id=g.id) }}"
+                  method="POST"
+                  class="d-inline"
+                  onsubmit="return confirm('Delete this goal?');">
+              <button type="submit" class="btn btn-outline-danger">Delete</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="alert alert-light text-center mt-5">No goals yet ‑ add one above!</div>
+  {% endif %}
+</div>
+{% endblock %}

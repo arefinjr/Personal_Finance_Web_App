@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block title %}Reminders{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h1 class="mb-4">Bill Reminders</h1>
+
+  <!-- Add Reminder Form -->
+  <form method="POST" class="row g-2 mb-3">
+    {{ form.hidden_tag() }}  <!-- Ensure CSRF token is included -->
+    <div class="col-md-6">
+      <div class="form-floating mb-3">
+        {{ form.description(class="form-control", placeholder="Description") }}
+        {{ form.description.label(class="form-label") }}
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="form-floating mb-3">
+        {{ form.due_date(class="form-control", type="date") }}
+        {{ form.due_date.label(class="form-label") }}
+      </div>
+    </div>
+    <div class="col-md-2">
+      <div class="d-grid gap-2">
+        {{ form.submit(class="btn btn-danger w-100") }}
+      </div>
+    </div>
+  </form>
+
+  <!-- Search Reminders -->
+  <div class="input-group mb-3">
+    <input type="text" class="form-control" placeholder="Search reminders" aria-label="Search reminders" aria-describedby="search-addon" id="search-reminders">
+    <button class="btn btn-outline-secondary" type="button" id="search-button"><i class="bi bi-search"></i></button>
+  </div>
+
+  <!-- Existing Reminders -->
+  <ul class="list-group">
+    {% if reminders %}
+      {% for r in reminders %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <div>
+            <span>{{ r.description }} ({{ r.due_date.strftime('%Y-%m-%d') }})</span>
+            <div class="form-check form-switch mt-2">
+              <input class="form-check-input" type="checkbox" id="completed-{{ r.id }}" data-id="{{ r.id }}" {% if r.completed %}checked{% endif %}>
+              <label class="form-check-label" for="completed-{{ r.id }}">Completed</label>
+            </div>
+          </div>
+          <div>
+            <a href="{{ url_for('reminders.edit_reminder', reminder_id=r.id) }}"
+               class="btn btn-sm btn-outline-primary me-2">Edit</a>
+            <form action="{{ url_for('reminders.delete_reminder', reminder_id=r.id) }}"
+                  method="POST" class="d-inline">
+              <button class="btn btn-sm btn-outline-danger"
+                      onclick="return confirm('Delete?')">×</button>
+            </form>
+          </div>
+        </li>
+      {% endfor %}
+    {% else %}
+      <li class="list-group-item">No reminders yet.</li>
+    {% endif %}
+  </ul>
+</div>
+
+<script>
+  document.getElementById('search-button').addEventListener('click', function() {
+    const searchTerm = document.getElementById('search-reminders').value.toLowerCase();
+    const items = document.querySelectorAll('.list-group-item');
+    items.forEach(item => {
+      const description = item.querySelector('span').textContent.toLowerCase();
+      if (description.includes(searchTerm)) {
+        item.style.display = '';
+      } else {
+        item.style.display = 'none';
+      }
+    });
+  });
+
+  document.querySelectorAll('.form-check-input').forEach(input => {
+    input.addEventListener('change', function() {
+      const reminderId = this.getAttribute('data-id');
+      const completed = this.checked;
+      fetch(`/reminders/${reminderId}/complete`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': '{{ csrf_token() }}'  // Ensure CSRF token is included
+        },
+        body: JSON.stringify({ completed: completed })
+      }).then(response => response.json())
+        .then(data => {
+          if (!data.success) {
+            alert('Failed to update reminder status.');
+          }
+        });
+    });
+  });
+</script>
+{% endblock %}

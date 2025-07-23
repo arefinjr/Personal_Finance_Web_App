@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Register{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-5">
+    <h2 class="text-center mb-4">Create Account</h2>
+    <form method="POST" action="{{ url_for('auth.register') }}">
+      {{ form.hidden_tag() }}
+      {% for field in [form.username, form.email, form.password, form.confirm_password] %}
+        <div class="mb-3">{{ field.label(class="form-label") }} {{ field(class="form-control") }}</div>
+      {% endfor %}
+      {{ form.submit(class="btn btn-success w-100") }}
+    </form>
+    <p class="text-center mt-3">Already have an account? <a href="{{ url_for('auth.login') }}">Login</a></p>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Edit Reminder{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h1 class="mb-4">Edit Reminder</h1>
+  <form method="POST" class="row g-2 mb-3">
+    {{ form.hidden_tag() }}
+    <div class="col-md-6">
+      <div class="form-floating mb-3">
+        {{ form.description(class="form-control", placeholder="Description") }}
+        {{ form.description.label(class="form-label") }}
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="form-floating mb-3">
+        {{ form.due_date(class="form-control", type="date") }}
+        {{ form.due_date.label(class="form-label") }}
+      </div>
+    </div>
+    <div class="col-md-2">
+      <div class="d-grid gap-2">
+        {{ form.submit(class="btn btn-primary w-100") }}
+      </div>
+    </div>
+  </form>
+</div>
+{% endblock %}
